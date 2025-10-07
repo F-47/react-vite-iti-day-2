@@ -1,24 +1,34 @@
 import { useState } from "react";
 
-function Login({setIsLoggedIn}:{setIsLoggedIn:React.Dispatch<React.SetStateAction<boolean>>;}) {
-  const [email,setEmail] = useState<string>("")
-  const [password,setPassword] = useState<string>("")
+const secretEmail = "iti@g.com";
+const secretPass = "12345";
+
+function Login({
+  setIsLoggedIn,
+}: {
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!email || !password) {
       setError("Please fill in all fields.");
       return;
     }
+    if (email !== secretEmail || password !== secretPass) {
+      setError("Invalid email or password.");
+      return;
+    }
     setError("");
-    localStorage.setItem("isLoggedIn", "true")
-    setIsLoggedIn(true)
+    localStorage.setItem("isLoggedIn", "true");
+    setIsLoggedIn(true);
   };
 
   return (
-     <div className="login-container">
+    <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
         <h2>Login</h2>
 
@@ -32,7 +42,7 @@ function Login({setIsLoggedIn}:{setIsLoggedIn:React.Dispatch<React.SetStateActio
             type="email"
             placeholder="you@example.com"
             value={email}
-            onChange={(e)=>setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
@@ -44,7 +54,7 @@ function Login({setIsLoggedIn}:{setIsLoggedIn:React.Dispatch<React.SetStateActio
             type="password"
             placeholder="••••••••"
             value={password}
-            onChange={(e)=>setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 

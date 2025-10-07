@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 
-function Dashboard() {
-    const [count, setCount] = useState<number>(0);
-
-    const [seconds, setSeconds] = useState<number>(0);
+function Dashboard({
+  setIsLoggedIn,
+}: {
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const [count, setCount] = useState<number>(0);
+  const [seconds, setSeconds] = useState<number>(0);
   const [isRunning, setIsRunning] = useState<boolean>(false);
-
-    const [notes, setNotes] = useState<
+  const [notes, setNotes] = useState<
     { id: number; text: string; done: boolean }[]
   >([
     { id: 1, text: "Finish Dashboard UI", done: false },
@@ -14,7 +16,7 @@ function Dashboard() {
     { id: 3, text: "Commit and push code", done: false },
   ]);
 
-    useEffect(() => {
+  useEffect(() => {
     let interval: number | undefined;
     if (isRunning) {
       interval = window.setInterval(() => {
@@ -24,19 +26,17 @@ function Dashboard() {
     return () => clearInterval(interval);
   }, [isRunning]);
 
-    const handleStart = () => setIsRunning(true);
-  const handlePause = () => setIsRunning(false);
-  const handleReset = () => {
-    setIsRunning(false);
-    setSeconds(0);
-  };
-
-    const toggleNoteDone = (id: number) => {
+  const toggleNoteDone = (id: number) => {
     setNotes((prev) =>
       prev.map((note) =>
         note.id === id ? { ...note, done: !note.done } : note
       )
     );
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    setIsLoggedIn(false);
   };
 
   return (
@@ -46,18 +46,30 @@ function Dashboard() {
         <div className="card">
           <h2>Counter</h2>
           <p className="value">{count}</p>
-          <button onClick={() => setCount((prev) => prev + 1)}>Increment</button>
+          <button onClick={() => setCount((prev) => prev + 1)}>
+            Increment
+          </button>
         </div>
         <div className="card">
           <h2>Timer</h2>
           <p className="value">{seconds}s</p>
           <div className="buttons">
             {!isRunning ? (
-              <button onClick={handleStart}>Start</button>
+              <button onClick={() => setIsRunning(true)}>Start</button>
             ) : (
-              <button onClick={handlePause}>Pause</button>
+              <button onClick={() => setIsRunning(false)}>Pause</button>
             )}
-            <button onClick={handleReset}>Reset</button>
+            <button
+              onClick={() => {
+                console.log("test");
+                setIsRunning(false);
+                setSeconds(0);
+              }}
+              className="reset-button"
+              disabled={!isRunning}
+            >
+              Reset
+            </button>
           </div>
         </div>
         <div className="card">
@@ -75,6 +87,9 @@ function Dashboard() {
           </ul>
         </div>
       </div>
+      <button className="logout-btn" onClick={handleLogout}>
+        Logout
+      </button>
     </div>
   );
 }
